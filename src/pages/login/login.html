@@ -1,0 +1,36 @@
+<ion-header>
+    <ion-navbar hideBackButton="true" color="danger">
+        <ion-title>Login</ion-title>
+    </ion-navbar>
+</ion-header>
+
+
+<ion-content>
+    <div *ngIf="showLogin">
+    <form [formGroup]="authForm" (ngSubmit)="submitForm(authForm.value)">
+    <ion-list>
+        <ion-item>
+            <ion-label floating>Username</ion-label>
+            <ion-input type="text" value="" [formControl]="authForm.controls['username']" [ngClass]="{'error-border':!authForm.controls['username'].valid}"></ion-input>         
+        </ion-item><br/>
+        <div class="error-box" *ngIf="authForm.controls['username'].hasError('required') && authForm.controls['username'].touched">* Username is required!</div>
+        <div class="error-box" *ngIf="authForm.controls['username'].hasError('minlength') && authForm.controls['username'].touched">* Minimum username length is 5!</div>
+        <div class="error-box" *ngIf="authForm.controls['username'].hasError('maxlength') && authForm.controls['username'].touched">* Maximum username length is 10!</div>
+        <ion-item>
+            <ion-label floating>Password</ion-label>
+            <ion-input type="text" value="" [formControl]="authForm.controls['password']" ></ion-input>
+        </ion-item><br/>
+        <div class="error-box" *ngIf="authForm.controls['password'].hasError('required') && authForm.controls['password'].touched">* Username is required!</div>
+        <div class="error-box" *ngIf="authForm.controls['password'].hasError('minlength') && authForm.controls['password'].touched">* Minimum username length is 8!</div>
+        <div class="error-box" *ngIf="authForm.controls['password'].hasError('checkFirstCharacterValidatorOutput') && authForm.controls['password'].touched">* Password cant't start with number!</div>
+    </ion-list>
+    
+    <div padding>
+        <button type="submit" ion-button full [disabled]="!authForm.valid">Submit</button>
+    </div>
+    </form>
+    </div>
+    <div *ngIf="!showLogin">
+        <p>You are already logged in</p>
+    </div>
+</ion-content>

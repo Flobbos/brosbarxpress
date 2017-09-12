@@ -1,8 +1,14 @@
 import { Component } from '@angular/core';
 
-import { NavController, NavParams } from 'ionic-angular';
+import { NavController, NavParams} from 'ionic-angular';
 
 import { ItemDetailsPage } from '../item-details/item-details';
+
+import { Storage } from '@ionic/storage';
+
+import { Http } from '@angular/http';
+
+import 'rxjs/add/operator/finally';
 
 @Component({
   selector: 'page-list',
@@ -10,25 +16,78 @@ import { ItemDetailsPage } from '../item-details/item-details';
 })
 export class ListPage {
   icons: string[];
-  items: Array<{title: string, note: string, icon: string}>;
+  items: any;
+  user: {};
+  menuIsHidden: boolean = false;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
-    this.icons = ['flask', 'wifi', 'beer', 'football', 'basketball', 'paper-plane',
-    'american-football', 'boat', 'bluetooth', 'build'];
+  constructor(
+                public navCtrl: NavController, 
+                public navParams: NavParams, 
+                public storage: Storage,
+                private http: Http,) {
+    this.user = this.storage.get('user');
+    //console.log(this.user);
+  }
 
-    this.items = [];
-    for(let i = 1; i < 11; i++) {
-      this.items.push({
-        title: 'Item ' + i,
-        note: 'This is item #' + i,
-        icon: this.icons[Math.floor(Math.random() * this.icons.length)]
-      });
+    itemTapped(event, item) {
+        this.navCtrl.push(ItemDetailsPage, {
+          item: item
+        });
     }
-  }
+    
+    refreshItems(refresher){
+        console.log('Refreshing!');
+        console.log(refresher);
+        this.http.get("http://brosbar.com/api/getOrders/?user_id="+4216)
+            .finally(()=> {
+                if(refresher != null)
+                    refresher.complete()
+            })
+            .subscribe(data => {
+                let nutte = data.json();
+                if(nutte.success == true){ 
+                    this.pushItems(nutte.orders);
+                }
+                else{
+                    this.storage.set('orders',null);
+                    this.pushItems([]);
+                }  
+            }, error => {
+                console.log(error);// Error getting the data
+            });
+    }
+  
+    pushItems(data){
+        this.storage.set('orders', data);
+        this.items = data;
+        console.log('Pushing');
+    }
+    
+    // ngOnInit(){
+    //     this.storage.get('orders').then(data => {
+    //         console.log(data);
+    //         if(data !== null){
+    //             this.pushItems(data);
+    //         }
+    //         else{
+    //             console.log('Refreshing');
+    //             this.refreshItems();
+    //         }
+    //     });
+    // }
 
-  itemTapped(event, item) {
-    this.navCtrl.push(ItemDetailsPage, {
-      item: item
-    });
+    ionViewWillEnter(){
+        //Load data
+        this.storage.get('orders').then(data => {
+            console.log(data);
+            if(data !== null){
+                this.pushItems(data);
+            }
+            else{
+                console.log('Refreshing');
+                this.refreshItems(null);
+            }
+        });
+    }
+      
   }
-}

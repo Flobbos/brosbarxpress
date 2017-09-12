@@ -1,19 +1,25 @@
 <ion-header>
-  <ion-navbar>
+  <ion-navbar color="danger">
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>My First List</ion-title>
+    <ion-title>Order List</ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content>
+  <ion-refresher (ionRefresh)="refreshItems($event)"pullingIcon="arrow-dropdown"
+                 pullingText="Pull to refresh"
+                 refreshingSpinner="circles"
+                 refreshingText="Refreshing...">
+    <ion-refresher-content>
+    </ion-refresher-content>
+  </ion-refresher>
   <ion-list>
     <button ion-item *ngFor="let item of items" (click)="itemTapped($event, item)">
-      <ion-icon name="{{item.icon}}" item-left></ion-icon>
-      {{item.title}}
+      {{item.id}} - {{ item.user.name }}
       <div class="item-note" item-right>
-        {{item.note}}
+        {{ item.delivery_time }} 
       </div>
     </button>
   </ion-list>

@@ -1,18 +1,71 @@
 <ion-header>
-  <ion-navbar>
-    <button menuToggle *ngIf="!selectedItem">
-      <ion-icon name="menu"></ion-icon>
-    </button>
-    <ion-title>Item Details</ion-title>
-  </ion-navbar>
+    <ion-navbar color="danger">
+        <button menuToggle *ngIf="!selectedItem">
+            <ion-icon name="menu"></ion-icon>
+        </button>
+        <ion-title>Order: {{selectedItem.id }} </ion-title>
+    </ion-navbar>
 </ion-header>
 
 <ion-content>
-  <h3 text-center *ngIf="selectedItem">
-    {{selectedItem.title}}
-    <ion-icon [name]="selectedItem.icon"></ion-icon>
-  </h3>
-  <h4 text-center *ngIf="selectedItem">
-    You navigated here from <b>{{selectedItem.title}}</b>
-  </h4>
+    <ion-grid>
+        <ion-row>
+            <ion-col col-12>
+                <h3 text-center *ngIf="selectedItem">
+                    交货时间: {{ selectedItem.delivery_time }}
+                </h3>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col col-12>
+                <h4 text-left *ngIf="selectedItem">
+                    地址: <b>{{ selectedItem.user.name }}</b>
+                    <br />
+                    {{ selectedItem.district }}<br />
+                    {{ selectedItem.street }} {{ selectedItem.street_number }} - {{ selectedItem.house_number }}
+                    <br />
+                    付款类型: <b>{{ selectedItem.paymenttype.name }}</b>
+                </h4>
+            </ion-col>
+        </ion-row>
+        
+        <ion-row>
+            <ion-col col-6>
+                <button ion-button (click)="openMap()">Maps</button>
+            </ion-col>
+            <ion-col col-6 text-right>
+                <button ion-button (click)="copyAddress()">Copy</button>
+            </ion-col>
+        </ion-row>
+        
+        <ion-row>
+            <ion-col col-12>
+                <h4>食品</h4>
+                <ion-list>
+                    <ion-item *ngFor="let item of selectedItem.items">
+                        {{ item.food.name }} X {{ item.quantity }}
+                        <div class="item-note" item-right>
+                            ¥ {{ item.price*item.quantity }}
+                        </div>
+                    </ion-item>
+                    <ion-item *ngIf="selectedItem.discount > 0">
+                        <b>折扣</b>
+                        <div class="item-note" item-right>
+                            <b>¥ - {{ selectedItem.discount }}</b>
+                        </div>
+                    </ion-item>
+                    <ion-item>
+                        <b>总价</b>
+                        <div class="item-note" item-right>
+                            <b>¥ {{ selectedItem.total }}</b>
+                        </div>
+                    </ion-item>
+                </ion-list>
+                <button [color]="isDelivered ? 'secondary' : 'danger'" ion-button (click)="delivered()">Delivered</button>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+    
+    
+    
 </ion-content>

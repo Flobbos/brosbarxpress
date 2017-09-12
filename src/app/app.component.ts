@@ -1,12 +1,13 @@
 import { Component, ViewChild } from '@angular/core';
-
 import { Platform, MenuController, Nav } from 'ionic-angular';
 
-import { HelloIonicPage } from '../pages/hello-ionic/hello-ionic';
 import { ListPage } from '../pages/list/list';
-
+import { LoginPage } from '../pages/login/login';
+import { ProfilePage } from '../pages/profile/profile';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
+import {Storage} from '@ionic/storage';
+
 
 
 @Component({
@@ -16,21 +17,22 @@ export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
   // make HelloIonicPage the root (or first) page
-  rootPage = HelloIonicPage;
+  rootPage;
   pages: Array<{title: string, component: any}>;
 
   constructor(
     public platform: Platform,
     public menu: MenuController,
     public statusBar: StatusBar,
-    public splashScreen: SplashScreen
+    public splashScreen: SplashScreen,
+    public storage: Storage
   ) {
     this.initializeApp();
 
     // set our app's pages
     this.pages = [
-      { title: 'Hello Ionic', component: HelloIonicPage },
-      { title: 'My First List', component: ListPage }
+      { title: 'Order List', component: ListPage },
+      { title: 'Profile', component: ProfilePage },
     ];
   }
 
@@ -40,6 +42,15 @@ export class MyApp {
       // Here you can do any higher level native things you might need.
       this.statusBar.styleDefault();
       this.splashScreen.hide();
+
+      this.storage.get('user').then((val) =>{
+            if(val != null && val.user_id != null){
+                this.rootPage = ListPage;
+            }else{
+                this.rootPage = LoginPage;
+            }
+      });
+
     });
   }
 
