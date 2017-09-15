@@ -15,7 +15,8 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
 import { Clipboard } from '@ionic-native/clipboard';
-
+import {ShareService} from '../pages/services/ShareService';
+import {OrderService} from '../pages/services/OrderService';
 @NgModule({
   declarations: [
     MyApp,
@@ -44,6 +45,8 @@ import { Clipboard } from '@ionic-native/clipboard';
     IonicStorageModule,
     InAppBrowser,
     Clipboard,
+    ShareService,
+    OrderService,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

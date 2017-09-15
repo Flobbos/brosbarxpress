@@ -8,16 +8,24 @@
 </ion-header>
 
 <ion-content padding>
+    <ion-card>
+        <ion-card-header>
+            User Data
+        </ion-card-header>
+        <ion-card-content>
+            <ion-row>
+                <ion-col col-12>
+                    User: {{ getUsername() }} <br />
+                    ID: {{ getUserId() }} <br />
+                    Token: {{ getToken() }}
+                </ion-col>
+                <ion-col col-12>
+                    <button color="danger" ion-button block (click)="logout()">Logout</button>
+                </ion-col>
+            </ion-row>
+        </ion-card-content>
+    </ion-card>
     <ion-grid>
-        <ion-row *ngIf="profile">
-            <ion-col col-12>
-                User: {{ profile.username }} <br />
-                ID: {{ profile.user_id }} <br />
-                Token: {{ profile.token }}
-            </ion-col>
-            <ion-col col-12>
-                <button color="danger" ion-button (click)="logout()">Logout</button>
-            </ion-col>
-        </ion-row>
+        
     </ion-grid>
 </ion-content>

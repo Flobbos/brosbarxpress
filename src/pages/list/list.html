@@ -3,24 +3,34 @@
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>Order List</ion-title>
+    <ion-title>订单列表</ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content>
-  <ion-refresher (ionRefresh)="refreshItems($event)"pullingIcon="arrow-dropdown"
+    <ion-refresher (ionRefresh)="refreshItems($event)"pullingIcon="arrow-dropdown"
                  pullingText="Pull to refresh"
                  refreshingSpinner="circles"
                  refreshingText="Refreshing...">
-    <ion-refresher-content>
-    </ion-refresher-content>
-  </ion-refresher>
-  <ion-list>
-    <button ion-item *ngFor="let item of items" (click)="itemTapped($event, item)">
-      {{item.id}} - {{ item.user.name }}
-      <div class="item-note" item-right>
-        {{ item.delivery_time }} 
-      </div>
-    </button>
-  </ion-list>
+        <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+    <ion-grid>
+        <ion-row>
+            <ion-col col-12 text-center>
+                <!-- no deliveries to list -->
+                <h4 *ngIf="items && items.length == 0">尚未有订单</h4>
+                <!-- content still loading -->
+                <ion-spinner *ngIf="isLoading" name="bubbles"></ion-spinner>
+                <!-- render list content -->
+                <ion-list>
+                    <button ion-item *ngFor="let item of items" (click)="itemTapped($event, item)">
+                        {{item.id}} - {{ item.user.name }}
+                        <div class="item-note" item-right>
+                            {{ item.delivery_time }} 
+                        </div>
+                    </button>
+                </ion-list>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
 </ion-content>

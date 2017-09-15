@@ -1,68 +1,75 @@
 import {Component} from '@angular/core';
 import {Http} from '@angular/http';
-import {LoadingController, NavController, NavParams} from 'ionic-angular';
-import { Storage } from '@ionic/storage';
+import {NavController, NavParams} from 'ionic-angular';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
 import { Clipboard } from '@ionic-native/clipboard';
+import { AlertController } from 'ionic-angular';
+import {ListPage} from '../list/list';
+import {LoaderService} from '../services/LoaderService';
+import {OrderService} from '../services/OrderService';
+import {Order} from '../../app/models/order';
+
 @Component({
     selector: 'page-item-details',
-    templateUrl: 'item-details.html'
+    templateUrl: 'item-details.html',
+    providers: [LoaderService]
 })
 export class ItemDetailsPage {
-    selectedItem: any;
-    isDelivered: boolean;
+    selectedItem: Order;
     loading: any;
 
     constructor(public navCtrl: NavController, 
+                public loaderService: LoaderService,
                 public navParams: NavParams, 
                 public http: Http, 
-                public storage: Storage, 
+                public orderService: OrderService, 
                 private iab: InAppBrowser,
-                public loadingCtrl: LoadingController, 
-                private clipboard: Clipboard) {
+                private clipboard: Clipboard,
+                private alertCtrl: AlertController) {
         // If we navigated to this page, we will have an item available as a nav param
         this.selectedItem = navParams.get('item');
+        //console.log(this.selectedItem);
     } 
     
     openMap() {
-        let address = '北京'+this.selectedItem.district+this.selectedItem.street+this.selectedItem.street_number+this.selectedItem.house_number;
-        let browser = this.iab.create("http://api.map.baidu.com/geocoder?address="+address+'&output=html','_blank');
+        this.iab.create("http://api.map.baidu.com/geocoder?address=" + this.orderService.getAddress(this.selectedItem)+'&output=html','_blank');
     }    
     copyAddress(){
-        this.clipboard.copy('北京'+this.selectedItem.district+this.selectedItem.street+this.selectedItem.street_number+this.selectedItem.house_number);
+        this.clipboard.copy(this.orderService.getAddress(this.selectedItem));
     }
     delivered() {
-        this.presentLoading();
+        this.loaderService.presentLoading();
         this.http.get("http://brosbar.com/api/updateOrder/?id=" + this.selectedItem.id)
-            .finally(() => this.dismissLoading())
+            .finally(() => {
+                this.loaderService.dismissLoading();
+            })
             .subscribe(data => {
-                this.isDelivered = !this.isDelivered;
-                this.storage.get('orders').then((orders) =>{
-                    let orderIndex = orders.indexOf(orders.find(order => order.id == this.selectedItem.id));
-                    orders.splice(orderIndex, 1);
-
-                    console.log(orders);
-                    this.storage.set('orders', orders);
-
-                })
+                this.orderService.removeOrder(this.selectedItem.id);
+                this.navCtrl.setRoot(ListPage);
             }, error => {
                 console.log(error);// Error getting the data
             });
     }
-    
-    private presentLoading() {
-        this.loading = this.loadingCtrl.create({
-            content: "Please wait...",
-            dismissOnPageChange: true
+    showConfirm() {
+        let confirm = this.alertCtrl.create({
+            title: '订单完成?',
+            message: '你确定要把这张订单标记为完成吗？',
+            buttons: [
+            {
+                text: '不要',
+                handler: () => {
+                  //console.log('Disagree clicked');
+                }
+            },
+            {
+                text: '要',
+                handler: () => {
+                    this.delivered();
+                }
+            }
+          ]
         });
-        this.loading.present();
-    }
-
-    private dismissLoading() {
-        this.loading.dismiss();
+        confirm.present();
     }
     
-    ngOnInit() {
-        console.log(this.selectedItem);
-    }
 }

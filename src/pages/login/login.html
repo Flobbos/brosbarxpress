@@ -11,18 +11,21 @@
     <ion-list>
         <ion-item>
             <ion-label floating>Username</ion-label>
-            <ion-input type="text" value="" [formControl]="authForm.controls['username']" [ngClass]="{'error-border':!authForm.controls['username'].valid}"></ion-input>         
-        </ion-item><br/>
-        <div class="error-box" *ngIf="authForm.controls['username'].hasError('required') && authForm.controls['username'].touched">* Username is required!</div>
-        <div class="error-box" *ngIf="authForm.controls['username'].hasError('minlength') && authForm.controls['username'].touched">* Minimum username length is 5!</div>
-        <div class="error-box" *ngIf="authForm.controls['username'].hasError('maxlength') && authForm.controls['username'].touched">* Maximum username length is 10!</div>
+            <ion-input type="email" value="" [formControl]="authForm.controls['username']" [ngClass]="{'error-border':!authForm.controls['username'].valid}"></ion-input>         
+        </ion-item>
+        
+        <ion-item *ngIf="authForm.controls['username'].hasError('required') && authForm.controls['username'].touched">* Username is required!</ion-item>
+        <ion-item *ngIf="authForm.controls['username'].hasError('minlength') && authForm.controls['username'].touched">* Minimum username length is 5!</ion-item>
+        <ion-item *ngIf="authForm.controls['username'].hasError('maxlength') && authForm.controls['username'].touched">* Maximum username length is 20!</ion-item>
+        
         <ion-item>
             <ion-label floating>Password</ion-label>
-            <ion-input type="text" value="" [formControl]="authForm.controls['password']" ></ion-input>
-        </ion-item><br/>
-        <div class="error-box" *ngIf="authForm.controls['password'].hasError('required') && authForm.controls['password'].touched">* Username is required!</div>
-        <div class="error-box" *ngIf="authForm.controls['password'].hasError('minlength') && authForm.controls['password'].touched">* Minimum username length is 8!</div>
-        <div class="error-box" *ngIf="authForm.controls['password'].hasError('checkFirstCharacterValidatorOutput') && authForm.controls['password'].touched">* Password cant't start with number!</div>
+            <ion-input type="password" value="" [formControl]="authForm.controls['password']" ></ion-input>
+        </ion-item>
+        
+        <ion-item *ngIf="authForm.controls['password'].hasError('required') && authForm.controls['password'].touched">* Password is required!</ion-item>
+        <ion-item *ngIf="authForm.controls['password'].hasError('minlength') && authForm.controls['password'].touched">* Minimum password length is 8!</ion-item>
+        <ion-item *ngIf="authForm.controls['password'].hasError('checkFirstCharacterValidatorOutput') && authForm.controls['password'].touched">* Password cant't start with number!</ion-item>
     </ion-list>
     
     <div padding>

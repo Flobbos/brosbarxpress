@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
-import { Storage } from '@ionic/storage';
 import { NavController } from 'ionic-angular';
 import { LoginPage } from '../login/login';
+import {ShareService} from '../services/ShareService';
+import {OrderService} from '../services/OrderService';
+import { Storage } from '@ionic/storage';
 
 @Component({
   selector: 'page-profile',
@@ -9,21 +11,27 @@ import { LoginPage } from '../login/login';
 })
 export class ProfilePage {
     
-    profile: {
-        username: '',
-        user_id: '',
-        token: ''
-    };
+    constructor(
+        private orderService: OrderService, 
+        private navCtrl: NavController, 
+        private shareService: ShareService,
+        private storage: Storage) {}
     
-    constructor(private storage: Storage, private navCtrl: NavController) {
-        this.storage.get('user').then(data => {
-            
-            this.profile = data;
-            console.log(this.profile);
-        });
+    getUsername(){
+        return this.shareService.getUserName();
+    }
+    
+    getUserId(){
+        return this.shareService.getUserId();
+    }
+    
+    getToken(){
+        return this.shareService.getToken();
     }
     
     logout(){
+        this.orderService.removeAllOrders();
+        this.shareService.setDataToNull();
         this.storage.set('user',null);
         this.navCtrl.push(LoginPage);
     }
