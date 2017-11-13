@@ -20,12 +20,18 @@ export class OrderService {
         this.storage.set('orders',orders);
     }
     
-    public removeOrder(id: number): void{
-        this.getOrdersPromise().then((orders)=>{
+    public removeOrder(id: number): Promise<void>{
+        return Promise.resolve(this.getOrdersPromise().then((orders)=>{
             let index = orders.indexOf(orders.find(order => order.id == id));
             orders.splice(index, 1);
             this.setOrders(orders);
-        });
+        }));
+    }
+    
+    public spliceOrders(id: number,orders: Array<Order>):Array<Order>{
+        let index = orders.indexOf(orders.find(order => order.id == id));
+        orders.splice(index, 1);
+        return orders;
     }
     
     public getAddress(order: Order): string{

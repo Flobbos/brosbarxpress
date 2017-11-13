@@ -42,10 +42,19 @@ export class ItemDetailsPage {
         this.http.get("http://brosbar.com/api/updateOrder/?id=" + this.selectedItem.id)
             .finally(() => {
                 this.loaderService.dismissLoading();
+                
             })
             .subscribe(data => {
-                this.orderService.removeOrder(this.selectedItem.id);
-                this.navCtrl.setRoot(ListPage);
+                //this.orderService.removeOrder(this.selectedItem.id);
+                this.orderService.removeOrder(this.selectedItem.id).then(()=>{
+                    this.navCtrl.setRoot(ListPage);
+                });
+                /*this.orderService.getOrdersPromise().then((orders)=>{
+                    let new_orders = this.orderService.spliceOrders(this.selectedItem.id,orders);
+                    this.orderService.setOrders(new_orders);
+                    
+                });*/
+                //this.navCtrl.setRoot(ListPage);
             }, error => {
                 console.log(error);// Error getting the data
             });
